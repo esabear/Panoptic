@@ -431,10 +431,18 @@ def request_file(case, replace_slashes=True):
         if args.write_files:
             _ = os.path.join("output", kb.parsed_target_url.netloc.replace(":", "_"))
 
+            # Create output folders
             if not os.path.exists(_):
                 os.makedirs(_)
 
-            with open(os.path.join(_, "%s.txt" % case.location.replace(args.replace_slash if args.replace_slash else "/", "_").replace(":", "_")), "w") as f:
+            loc = case.location.replace(args.replace_slash if args.replace_slash else "/", os.path.sep)
+            out_dir = os.path.dirname(loc)
+            out_dir = out_dir[2:] if out_dir[1] == ":" else out_dir
+            out_dir = _ + os.path.sep + out_dir
+            if not os.path.exists(out_dir):
+                os.makedirs(out_dir)
+                
+            with open(out_dir + os.path.sep + os.path.basename(loc), "w") as f:
                 content = html
 
                 with kb.value_lock:
